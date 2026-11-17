@@ -1,0 +1,629 @@
+table _Medidas
+	lineageTag: 0a10ca73-90a4-534b-9ff4-6b1e09499f62
+
+	/// Price Index calculado en el reporte: mediana, entre PDV, del cociente $/kg numerador / $/kg denominador medido en el mismo PDV y la misma semana (fórmula del ETL de Platinum). Solo con un par en contexto; con varios pares queda vacío.
+	measure 'COPI PI Par' =
+			VAR _num = VALUES ( 'Pares COPI'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares COPI'[EAN_Denominador] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, MEDIANX ( _cruce, DIVIDE ( [@num], [@den] ) ) )
+		formatString: 0.0%
+		displayFolder: COPI\Pares definidos
+		lineageTag: 12aeed12-f9ce-5888-a785-52e41f4bb457
+
+	/// PDV distintos que tienen precio del numerador y del denominador en la misma semana.
+	measure 'COPI PDV Par' =
+			VAR _num = VALUES ( 'Pares COPI'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares COPI'[EAN_Denominador] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, COUNTROWS ( DISTINCT ( SELECTCOLUMNS ( _cruce, "@pdv", 'Precios COPI'[Codigo_PDV] ) ) ) )
+		formatString: #,0
+		displayFolder: COPI\Pares definidos
+		lineageTag: 6c82c805-d025-518d-919e-f7d2fd8847b5
+
+	/// Mediana del $/kg del numerador entre los PDV con cruce.
+	measure 'COPI Precio KG Num Par' =
+			VAR _num = VALUES ( 'Pares COPI'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares COPI'[EAN_Denominador] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, MEDIANX ( _cruce, [@num] ) )
+		formatString: \$ #,0
+		displayFolder: COPI\Pares definidos
+		lineageTag: 3edd7910-0472-5941-90db-c24f355295ed
+
+	/// Mediana del $/kg del denominador entre los PDV con cruce.
+	measure 'COPI Precio KG Den Par' =
+			VAR _num = VALUES ( 'Pares COPI'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares COPI'[EAN_Denominador] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, MEDIANX ( _cruce, [@den] ) )
+		formatString: \$ #,0
+		displayFolder: COPI\Pares definidos
+		lineageTag: 555c41a7-be45-5b84-b6ff-9f234668969b
+
+	/// Price Index de la semana calendario anterior. Requiere una sola semana en contexto.
+	measure 'COPI PI Par Sem Ant' =
+			VAR _sem = SELECTEDVALUE ( 'Semanas COPI'[Semana índice] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _sem ),
+			        CALCULATE ( [COPI PI Par], REMOVEFILTERS ( 'Semanas COPI' ), 'Semanas COPI'[Semana índice] = _sem - 1 )
+			    )
+		formatString: 0.0%
+		displayFolder: COPI\Pares definidos
+		lineageTag: d355cb0a-ee5e-53ee-b95e-7a23f6546305
+
+	/// Variación relativa del Price Index contra la semana anterior.
+	measure 'COPI Var Par' =
+			VAR _ant = [COPI PI Par Sem Ant]
+			RETURN
+			    IF ( NOT ISBLANK ( _ant ), DIVIDE ( [COPI PI Par] - _ant, _ant ) )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: COPI\Pares definidos
+		lineageTag: 63a841c1-2c70-51e9-aa59-e1391000a0f3
+
+	/// Price Index calculado en el reporte: mediana, entre PDV, del cociente $/kg numerador / $/kg denominador medido en el mismo PDV y la misma semana (fórmula del ETL de Platinum). Con varios SKU de un lado, el precio de ese lado es el promedio de sus $/kg en el PDV.
+	measure 'COPI PI Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), MEDIANX ( _cruce, DIVIDE ( [@num], [@den] ) ) )
+		formatString: 0.0%
+		displayFolder: COPI\Grupo personalizado
+		lineageTag: afee7caf-bb54-5669-a066-5bc3dac2a30b
+
+	/// PDV distintos que tienen precio del numerador y del denominador en la misma semana.
+	measure 'COPI PDV Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), COUNTROWS ( DISTINCT ( SELECTCOLUMNS ( _cruce, "@pdv", 'Precios COPI'[Codigo_PDV] ) ) ) )
+		formatString: #,0
+		displayFolder: COPI\Grupo personalizado
+		lineageTag: 06161262-87d5-5c1a-9480-c01766e17d6b
+
+	/// Mediana del $/kg del numerador entre los PDV con cruce.
+	measure 'COPI Precio KG Num Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), MEDIANX ( _cruce, [@num] ) )
+		formatString: \$ #,0
+		displayFolder: COPI\Grupo personalizado
+		lineageTag: 975c6f96-24a0-52fa-a8a2-9d6489e0dc82
+
+	/// Mediana del $/kg del denominador entre los PDV con cruce.
+	measure 'COPI Precio KG Den Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios COPI', 'Precios COPI'[Codigo_PDV], 'Precios COPI'[Fecha] ),
+			            "@num", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios COPI'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( AVERAGE ( 'Precios COPI'[Precio KG] ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios COPI'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), MEDIANX ( _cruce, [@den] ) )
+		formatString: \$ #,0
+		displayFolder: COPI\Grupo personalizado
+		lineageTag: 5d06132a-80a9-5cd9-858f-6002274c6c79
+
+	/// Price Index de la semana calendario anterior. Requiere una sola semana en contexto.
+	measure 'COPI PI Libre Sem Ant' =
+			VAR _sem = SELECTEDVALUE ( 'Semanas COPI'[Semana índice] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _sem ),
+			        CALCULATE ( [COPI PI Libre], REMOVEFILTERS ( 'Semanas COPI' ), 'Semanas COPI'[Semana índice] = _sem - 1 )
+			    )
+		formatString: 0.0%
+		displayFolder: COPI\Grupo personalizado
+		lineageTag: 1c538a02-70e1-5600-98e4-398246b6a29e
+
+	/// Variación relativa del Price Index contra la semana anterior.
+	measure 'COPI Var Libre' =
+			VAR _ant = [COPI PI Libre Sem Ant]
+			RETURN
+			    IF ( NOT ISBLANK ( _ant ), DIVIDE ( [COPI PI Libre] - _ant, _ant ) )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: COPI\Grupo personalizado
+		lineageTag: f41762e0-14f4-52ca-b9e9-cd959adaa664
+
+	measure 'COPI Datos hasta' =
+			VAR _f = CALCULATE ( MAX ( 'Precios COPI'[Fecha] ), REMOVEFILTERS () )
+			VAR _sem = CALCULATE ( MAX ( 'Semanas COPI'[Año-Semana] ), REMOVEFILTERS (), 'Semanas COPI'[Fecha] = _f )
+			VAR _n = CALCULATE ( COUNTROWS ( 'Precios COPI' ), REMOVEFILTERS () )
+			RETURN
+			    IF (
+			        ISBLANK ( _f ),
+			        "Sin datos: actualizar el modelo",
+			        "COPI · datos hasta la semana " & _sem & " (" & FORMAT ( _f, "dd/mm/yyyy" ) & ") · " & FORMAT ( _n, "#,0" ) & " precios"
+			    )
+		displayFolder: COPI
+		lineageTag: 32beae00-8333-5a21-96ad-b543c85fc88f
+
+	/// Price Index calculado en el reporte: mediana, entre PDV, del cociente $/kg numerador / $/kg denominador medido en el mismo PDV y la misma semana (fórmula del ETL de Platinum). Solo con un par en contexto; con varios pares queda vacío.
+	measure 'SNP PI Par' =
+			VAR _num = VALUES ( 'Pares SNP'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares SNP'[EAN_Denominador] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, MEDIANX ( _cruce, DIVIDE ( [@num], [@den] ) ) )
+		formatString: 0.0%
+		displayFolder: SNP\Pares definidos
+		lineageTag: 92f00a2d-d03f-5c80-84ba-5774f87adc5e
+
+	/// PDV distintos que tienen precio del numerador y del denominador en la misma semana.
+	measure 'SNP PDV Par' =
+			VAR _num = VALUES ( 'Pares SNP'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares SNP'[EAN_Denominador] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, COUNTROWS ( DISTINCT ( SELECTCOLUMNS ( _cruce, "@pdv", 'Precios SNP'[Codigo_PDV] ) ) ) )
+		formatString: #,0
+		displayFolder: SNP\Pares definidos
+		lineageTag: 373b8451-8146-5c2b-b67a-c69bcca9cd24
+
+	/// Mediana del $/kg del numerador entre los PDV con cruce.
+	measure 'SNP Precio KG Num Par' =
+			VAR _num = VALUES ( 'Pares SNP'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares SNP'[EAN_Denominador] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, MEDIANX ( _cruce, [@num] ) )
+		formatString: \$ #,0
+		displayFolder: SNP\Pares definidos
+		lineageTag: d323be42-68af-5202-8d69-470f9cdb1068
+
+	/// Mediana del $/kg del denominador entre los PDV con cruce.
+	measure 'SNP Precio KG Den Par' =
+			VAR _num = VALUES ( 'Pares SNP'[EAN_Numerador] )
+			VAR _den = VALUES ( 'Pares SNP'[EAN_Denominador] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( COUNTROWS ( _num ) = 1 && COUNTROWS ( _den ) = 1, MEDIANX ( _cruce, [@den] ) )
+		formatString: \$ #,0
+		displayFolder: SNP\Pares definidos
+		lineageTag: 81be3bdb-9e67-50ce-8a2e-fe2470be5b65
+
+	/// Price Index de la semana calendario anterior. Requiere una sola semana en contexto.
+	measure 'SNP PI Par Sem Ant' =
+			VAR _sem = SELECTEDVALUE ( 'Semanas SNP'[Semana índice] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _sem ),
+			        CALCULATE ( [SNP PI Par], REMOVEFILTERS ( 'Semanas SNP' ), 'Semanas SNP'[Semana índice] = _sem - 1 )
+			    )
+		formatString: 0.0%
+		displayFolder: SNP\Pares definidos
+		lineageTag: 98bd6ddf-85f5-57f7-996c-115a1b084130
+
+	/// Variación relativa del Price Index contra la semana anterior.
+	measure 'SNP Var Par' =
+			VAR _ant = [SNP PI Par Sem Ant]
+			RETURN
+			    IF ( NOT ISBLANK ( _ant ), DIVIDE ( [SNP PI Par] - _ant, _ant ) )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: SNP\Pares definidos
+		lineageTag: d27d3f61-447c-5faa-8d43-b5f14c993c06
+
+	/// Price Index calculado en el reporte: mediana, entre PDV, del cociente $/kg numerador / $/kg denominador medido en el mismo PDV y la misma semana (fórmula del ETL de Platinum). Con varios SKU de un lado, el precio de ese lado es el promedio de sus $/kg en el PDV.
+	measure 'SNP PI Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), MEDIANX ( _cruce, DIVIDE ( [@num], [@den] ) ) )
+		formatString: 0.0%
+		displayFolder: SNP\Grupo personalizado
+		lineageTag: 580366dc-bebf-5b6d-8339-50a594a3e125
+
+	/// PDV distintos que tienen precio del numerador y del denominador en la misma semana.
+	measure 'SNP PDV Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), COUNTROWS ( DISTINCT ( SELECTCOLUMNS ( _cruce, "@pdv", 'Precios SNP'[Codigo_PDV] ) ) ) )
+		formatString: #,0
+		displayFolder: SNP\Grupo personalizado
+		lineageTag: c726fad4-c2df-5a73-8e2e-cf9709bd00d8
+
+	/// Mediana del $/kg del numerador entre los PDV con cruce.
+	measure 'SNP Precio KG Num Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), MEDIANX ( _cruce, [@num] ) )
+		formatString: \$ #,0
+		displayFolder: SNP\Grupo personalizado
+		lineageTag: ef24fd0d-f631-564a-96c6-1754287d4801
+
+	/// Mediana del $/kg del denominador entre los PDV con cruce.
+	measure 'SNP Precio KG Den Libre' =
+			VAR _num = VALUES ( 'SKU Numerador'[EAN] )
+			VAR _den = VALUES ( 'SKU Denominador'[EAN] )
+			VAR _din = SELECTEDVALUE ( 'Tipo de precio'[Tipo] ) = "Dinamizado"
+			-- $/kg del numerador en cada PDV y semana donde tiene precio
+			VAR _base =
+			    CALCULATETABLE (
+			        ADDCOLUMNS (
+			            SUMMARIZE ( 'Precios SNP', 'Precios SNP'[Codigo_PDV], 'Precios SNP'[Fecha] ),
+			            "@num", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ) )
+			        ),
+			        REMOVEFILTERS ( Productos ),
+			        TREATAS ( _num, 'Precios SNP'[EAN] )
+			    )
+			-- $/kg del denominador en ese mismo PDV y semana; quedan solo los PDV con los dos precios
+			VAR _cruce =
+			    FILTER (
+			        ADDCOLUMNS (
+			            _base,
+			            "@den", CALCULATE ( IF ( _din, AVERAGE ( 'Precios SNP'[Precio Din KG] ), AVERAGE ( 'Precios SNP'[Precio KG] ) ), REMOVEFILTERS ( Productos ), TREATAS ( _den, 'Precios SNP'[EAN] ) )
+			        ),
+			        [@num] > 0 && [@den] > 0
+			    )
+			RETURN
+			    IF ( ISFILTERED ( 'SKU Numerador' ) && ISFILTERED ( 'SKU Denominador' ), MEDIANX ( _cruce, [@den] ) )
+		formatString: \$ #,0
+		displayFolder: SNP\Grupo personalizado
+		lineageTag: ad868bd0-3d0d-5399-b5f6-7386b01b589f
+
+	/// Price Index de la semana calendario anterior. Requiere una sola semana en contexto.
+	measure 'SNP PI Libre Sem Ant' =
+			VAR _sem = SELECTEDVALUE ( 'Semanas SNP'[Semana índice] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _sem ),
+			        CALCULATE ( [SNP PI Libre], REMOVEFILTERS ( 'Semanas SNP' ), 'Semanas SNP'[Semana índice] = _sem - 1 )
+			    )
+		formatString: 0.0%
+		displayFolder: SNP\Grupo personalizado
+		lineageTag: 2c85e848-b88b-5cd8-8da9-f41849dce4e2
+
+	/// Variación relativa del Price Index contra la semana anterior.
+	measure 'SNP Var Libre' =
+			VAR _ant = [SNP PI Libre Sem Ant]
+			RETURN
+			    IF ( NOT ISBLANK ( _ant ), DIVIDE ( [SNP PI Libre] - _ant, _ant ) )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: SNP\Grupo personalizado
+		lineageTag: 935358ad-f3e6-5b6f-9d82-f34875c94343
+
+	measure 'SNP Datos hasta' =
+			VAR _f = CALCULATE ( MAX ( 'Precios SNP'[Fecha] ), REMOVEFILTERS () )
+			VAR _sem = CALCULATE ( MAX ( 'Semanas SNP'[Año-Semana] ), REMOVEFILTERS (), 'Semanas SNP'[Fecha] = _f )
+			VAR _n = CALCULATE ( COUNTROWS ( 'Precios SNP' ), REMOVEFILTERS () )
+			RETURN
+			    IF (
+			        ISBLANK ( _f ),
+			        "Sin datos: actualizar el modelo",
+			        "SNP · datos hasta la semana " & _sem & " (" & FORMAT ( _f, "dd/mm/yyyy" ) & ") · " & FORMAT ( _n, "#,0" ) & " precios"
+			    )
+		displayFolder: SNP
+		lineageTag: 50b32c4e-d004-5875-9570-aa553b0241d7
+
+	measure 'Texto SKU A' =
+			VAR _n = COUNTROWS ( VALUES ( 'SKU Numerador'[EAN] ) )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        NOT ISFILTERED ( 'SKU Numerador' ), "(elegir SKU A)",
+			        _n = 1, SELECTEDVALUE ( 'SKU Numerador'[SKU] ),
+			        _n & " SKUs (promedio)"
+			    )
+		displayFolder: Textos
+		lineageTag: e714f9fa-403b-5670-9d76-3c330d7d7c44
+
+	measure 'Texto SKU B' =
+			VAR _n = COUNTROWS ( VALUES ( 'SKU Denominador'[EAN] ) )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        NOT ISFILTERED ( 'SKU Denominador' ), "(elegir SKU B)",
+			        _n = 1, SELECTEDVALUE ( 'SKU Denominador'[SKU] ),
+			        _n & " SKUs (promedio)"
+			    )
+		displayFolder: Textos
+		lineageTag: 66fccb1d-0ead-5696-aa26-7fc66d1a3f57
+
+	measure 'Texto comparación' = "Numerador (SKU A): " & [Texto SKU A] & "     vs     Denominador (SKU B): " & [Texto SKU B]
+		displayFolder: Textos
+		lineageTag: 0f639d92-e4da-5d8d-a094-8c92ceef6664
+
+	column Column
+		isHidden
+		formatString: 0
+		lineageTag: df17d751-92ca-544b-9012-47df465dd86f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Column]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Medidas = calculated
+		mode: import
+		source = Row("Column", BLANK())
+
+	annotation PBI_Id = c22143e0bfd95c4d92c17778b74ff918
+

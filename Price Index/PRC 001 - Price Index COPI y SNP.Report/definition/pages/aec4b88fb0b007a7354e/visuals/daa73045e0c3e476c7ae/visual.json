@@ -1,0 +1,180 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "daa73045e0c3e476c7ae",
+  "position": {
+    "x": 798,
+    "y": 834,
+    "z": 8000,
+    "height": 228,
+    "width": 520,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PDV COPI"
+                    }
+                  },
+                  "Property": "Región"
+                }
+              },
+              "queryRef": "PDV COPI.Región",
+              "nativeQueryRef": "Región",
+              "displayName": "Región"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI PI Libre"
+                }
+              },
+              "queryRef": "_Medidas.COPI PI Libre",
+              "nativeQueryRef": "COPI PI Libre",
+              "displayName": "Price Index"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI Precio KG Num Libre"
+                }
+              },
+              "queryRef": "_Medidas.COPI Precio KG Num Libre",
+              "nativeQueryRef": "COPI Precio KG Num Libre",
+              "displayName": "$/kg A"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI Precio KG Den Libre"
+                }
+              },
+              "queryRef": "_Medidas.COPI Precio KG Den Libre",
+              "nativeQueryRef": "COPI Precio KG Den Libre",
+              "displayName": "$/kg B"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI PDV Libre"
+                }
+              },
+              "queryRef": "_Medidas.COPI PDV Libre",
+              "nativeQueryRef": "COPI PDV Libre",
+              "displayName": "PDV"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Medidas"
+                  }
+                },
+                "Property": "COPI PDV Libre"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'growToFit'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'BoldHeader'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Por región'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

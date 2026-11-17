@@ -1,0 +1,64 @@
+table 'Precios COPI'
+	lineageTag: 99a558f4-e935-56e5-9497-73b237fbf600
+
+	column Fecha
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: 1650740e-4a00-5bac-8135-02412fa6da91
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+	column EAN
+		dataType: string
+		isHidden
+		lineageTag: b3a2ad16-7f19-5f68-8307-1409aab634d1
+		summarizeBy: none
+		sourceColumn: EAN
+
+		annotation SummarizationSetBy = Automatic
+
+	column Codigo_PDV
+		dataType: string
+		isHidden
+		lineageTag: 7f71a581-1c0f-53c0-a33d-67dfbcf60a2a
+		summarizeBy: none
+		sourceColumn: Codigo_PDV
+
+		annotation SummarizationSetBy = Automatic
+
+	column Precio_BASE
+		dataType: double
+		isHidden
+		formatString: \$ #,0
+		lineageTag: a671631d-dbd2-5f9e-87f8-792211cf3977
+		summarizeBy: none
+		sourceColumn: Precio_BASE
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Precio KG' = DIVIDE ( 'Precios COPI'[Precio_BASE], RELATED ( Productos[KG_U] ) )
+		dataType: double
+		isHidden
+		formatString: \$ #,0
+		lineageTag: 1858009e-9b38-50ca-b818-8c787bb5212c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Precios COPI' = m
+		mode: import
+		source =
+				let
+				    Origen = Sql.Database("10.1.82.27", "SANDBOX_BRONZE"),
+				    Gold = Origen{[Schema="PRC",Item="Gold_Comparativo"]}[Data],
+				    Filas = Table.SelectRows(Gold, each [Fuente] = "COPI"),
+				    Columnas = Table.SelectColumns(Filas, {"Fecha", "EAN", "Codigo_PDV", "Precio_BASE"}),
+				    Tipos = Table.TransformColumnTypes(Columnas, {{"Fecha", type datetime}, {"EAN", type text}, {"Codigo_PDV", type text}, {"Precio_BASE", type number}})
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table
+

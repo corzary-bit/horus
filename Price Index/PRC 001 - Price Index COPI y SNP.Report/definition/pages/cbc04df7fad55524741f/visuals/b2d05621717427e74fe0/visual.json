@@ -1,0 +1,195 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "b2d05621717427e74fe0",
+  "position": {
+    "x": 1142,
+    "y": 230,
+    "z": 5000,
+    "height": 372,
+    "width": 748,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pares SNP"
+                    }
+                  },
+                  "Property": "Par"
+                }
+              },
+              "queryRef": "Pares SNP.Par",
+              "nativeQueryRef": "Par",
+              "displayName": "Par"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "SNP PI Par"
+                }
+              },
+              "queryRef": "_Medidas.SNP PI Par",
+              "nativeQueryRef": "SNP PI Par",
+              "displayName": "Price Index"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "SNP Var Par"
+                }
+              },
+              "queryRef": "_Medidas.SNP Var Par",
+              "nativeQueryRef": "SNP Var Par",
+              "displayName": "Var. vs sem. ant."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "SNP Precio KG Num Par"
+                }
+              },
+              "queryRef": "_Medidas.SNP Precio KG Num Par",
+              "nativeQueryRef": "SNP Precio KG Num Par",
+              "displayName": "$/kg num."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "SNP Precio KG Den Par"
+                }
+              },
+              "queryRef": "_Medidas.SNP Precio KG Den Par",
+              "nativeQueryRef": "SNP Precio KG Den Par",
+              "displayName": "$/kg den."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "SNP PDV Par"
+                }
+              },
+              "queryRef": "_Medidas.SNP PDV Par",
+              "nativeQueryRef": "SNP PDV Par",
+              "displayName": "PDV con cruce"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Pares SNP"
+                  }
+                },
+                "Property": "Par"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'growToFit'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'BoldHeader'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Detalle por par (toda la selección de los segmentadores)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

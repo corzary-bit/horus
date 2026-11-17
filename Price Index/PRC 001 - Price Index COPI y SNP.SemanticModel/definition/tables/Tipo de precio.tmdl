@@ -1,0 +1,32 @@
+table 'Tipo de precio'
+	lineageTag: fb0fc64c-018e-581d-be3d-1eb33a32e6d7
+
+	column Tipo
+		dataType: string
+		lineageTag: ca0482e9-0140-5204-bd88-bc6e9aec68fe
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Tipo]
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e9be4493-76b7-5002-a8a6-8d0cf482be24
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Orden]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Tipo de precio' = calculated
+		mode: import
+		source =
+				-- SNP releva precio base y precio dinamizado (oferta / dinámica). Sin selección: precio base.
+				DATATABLE ( "Tipo", STRING, "Orden", INTEGER, { { "Base", 1 }, { "Dinamizado", 2 } } )
+
+	annotation PBI_Id = 678c6b3aeafc5bbcbdbb9b8583ab843c
+

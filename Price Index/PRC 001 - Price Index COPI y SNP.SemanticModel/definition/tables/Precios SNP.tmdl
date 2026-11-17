@@ -1,0 +1,83 @@
+table 'Precios SNP'
+	lineageTag: 43f7fe8d-eadb-5985-9723-7b5e46be96fb
+
+	column Fecha
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: 09555996-c5d7-53af-b4a9-e2603247febe
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+	column EAN
+		dataType: string
+		isHidden
+		lineageTag: 524a1ede-616d-592b-91ef-e3cb6f247384
+		summarizeBy: none
+		sourceColumn: EAN
+
+		annotation SummarizationSetBy = Automatic
+
+	column Codigo_PDV
+		dataType: string
+		isHidden
+		lineageTag: 9fc2262c-58d9-58e8-9ea3-380f38d37a75
+		summarizeBy: none
+		sourceColumn: Codigo_PDV
+
+		annotation SummarizationSetBy = Automatic
+
+	column Precio_BASE
+		dataType: double
+		isHidden
+		formatString: \$ #,0
+		lineageTag: c134a6be-184b-5bbc-bce6-2ecdddfbd71c
+		summarizeBy: none
+		sourceColumn: Precio_BASE
+
+		annotation SummarizationSetBy = Automatic
+
+	column Precio_Dinamizado
+		dataType: double
+		isHidden
+		formatString: \$ #,0
+		lineageTag: c03fcc2f-58c0-5cb0-8be5-da8801d2e57d
+		summarizeBy: none
+		sourceColumn: Precio_Dinamizado
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Precio KG' = DIVIDE ( 'Precios SNP'[Precio_BASE], RELATED ( Productos[KG_U] ) )
+		dataType: double
+		isHidden
+		formatString: \$ #,0
+		lineageTag: ffe0b8f8-943f-539d-9b78-d3e923828c31
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Precio Din KG' = DIVIDE ( 'Precios SNP'[Precio_Dinamizado], RELATED ( Productos[KG_U] ) )
+		dataType: double
+		isHidden
+		formatString: \$ #,0
+		lineageTag: cb062b42-66b9-5a74-90b4-4427525a65e8
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Precios SNP' = m
+		mode: import
+		source =
+				let
+				    Origen = Sql.Database("10.1.82.27", "SANDBOX_BRONZE"),
+				    Gold = Origen{[Schema="PRC",Item="Gold_Comparativo"]}[Data],
+				    Filas = Table.SelectRows(Gold, each [Fuente] = "SNP"),
+				    Columnas = Table.SelectColumns(Filas, {"Fecha", "EAN", "Codigo_PDV", "Precio_BASE", "Precio_Dinamizado"}),
+				    Tipos = Table.TransformColumnTypes(Columnas, {{"Fecha", type datetime}, {"EAN", type text}, {"Codigo_PDV", type text}, {"Precio_BASE", type number}, {"Precio_Dinamizado", type number}})
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table
+

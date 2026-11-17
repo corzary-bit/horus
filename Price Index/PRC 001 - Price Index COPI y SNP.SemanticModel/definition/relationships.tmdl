@@ -1,0 +1,23 @@
+relationship 75c207dc-63ca-5afb-8a1d-f6cf32f3c7f3
+	fromColumn: 'Precios COPI'.EAN
+	toColumn: Productos.EAN
+
+relationship 9aa4e671-3360-5fbd-bba1-155d6d951440
+	fromColumn: 'Precios COPI'.Codigo_PDV
+	toColumn: 'PDV COPI'.Codigo_PDV
+
+relationship 37e0dcfd-438f-5a61-b4c8-c858b3b574e4
+	fromColumn: 'Precios COPI'.Fecha
+	toColumn: 'Semanas COPI'.Fecha
+
+relationship 2a777af5-7def-521e-aca6-d2bdf3a64b15
+	fromColumn: 'Precios SNP'.EAN
+	toColumn: Productos.EAN
+
+relationship 171bbf35-45ed-5d00-a2f2-4f12d9fc7dbf
+	fromColumn: 'Precios SNP'.Codigo_PDV
+	toColumn: 'PDV SNP'.Codigo_PDV
+
+relationship 02424bc2-7607-5657-8c53-fab3a09bd834
+	fromColumn: 'Precios SNP'.Fecha
+	toColumn: 'Semanas SNP'.Fecha

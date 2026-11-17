@@ -1,0 +1,186 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "706d25fed24d93989d9b",
+  "position": {
+    "x": 30,
+    "y": 230,
+    "z": 4000,
+    "height": 372,
+    "width": 1100,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "PDV SNP"
+                    }
+                  },
+                  "Property": "Cadena"
+                }
+              },
+              "queryRef": "PDV SNP.Cadena",
+              "nativeQueryRef": "Cadena",
+              "displayName": "Cadena",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "SNP PI Par"
+                }
+              },
+              "queryRef": "_Medidas.SNP PI Par",
+              "nativeQueryRef": "SNP PI Par",
+              "displayName": "Price Index"
+            }
+          ]
+        },
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pares SNP"
+                    }
+                  },
+                  "Property": "Par"
+                }
+              },
+              "queryRef": "Pares SNP.Par",
+              "nativeQueryRef": "Par",
+              "displayName": "Par",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "FillRule": {
+                      "Input": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Entity": "_Medidas"
+                            }
+                          },
+                          "Property": "SNP PI Par"
+                        }
+                      },
+                      "FillRule": {
+                        "linearGradient3": {
+                          "min": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#9fd8ad'"
+                              }
+                            },
+                            "value": {
+                              "Literal": {
+                                "Value": "0.7D"
+                              }
+                            }
+                          },
+                          "mid": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#ffffff'"
+                              }
+                            },
+                            "value": {
+                              "Literal": {
+                                "Value": "1D"
+                              }
+                            }
+                          },
+                          "max": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#f4b183'"
+                              }
+                            },
+                            "value": {
+                              "Literal": {
+                                "Value": "1.3D"
+                              }
+                            }
+                          },
+                          "nullColoringStrategy": {
+                            "strategy": {
+                              "Literal": {
+                                "Value": "'noColor'"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 0
+                }
+              }
+            ],
+            "metadata": "_Medidas.SNP PI Par"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Price Index por cadena y par (verde: numerador más barato; naranja: más caro)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "25466ed1670880d864f0",
+  "position": {
+    "x": 30,
+    "y": 72,
+    "z": 1200,
+    "height": 36,
+    "width": 1860,
+    "tabOrder": 1200
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Calculado en el reporte, sin pre-agregado: mediana entre PDV de ($/kg numerador ÷ $/kg denominador) en el mismo PDV y semana, sobre PRC.Gold_Comparativo y el KG/U del maestro de EANs. En SNP el precio es el base, o el dinamizado si se elige en «Tipo de precio».",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#5c6470"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

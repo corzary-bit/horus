@@ -1,0 +1,77 @@
+table 'SKU Numerador'
+	lineageTag: af0aa83d-5523-528e-b727-044ffce08ccd
+
+	column EAN
+		dataType: string
+		isHidden
+		lineageTag: 9b8dcd0a-9a6a-50ed-8ad3-fd737d75ba58
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [EAN]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SKU
+		dataType: string
+		lineageTag: 09e0acba-c75f-52bc-9602-b6b00fb8016b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [SKU]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Marca
+		dataType: string
+		lineageTag: 8de50d13-6d5f-5b03-8a0d-d2b36207e4a3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Marca]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Empresa
+		dataType: string
+		lineageTag: 9ba80cf4-48f6-59ca-8ae9-6c549b0cf645
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Empresa]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Familia
+		dataType: string
+		lineageTag: 4f63f056-2275-5a83-9422-5b184c5447f8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Familia]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Segmento
+		dataType: string
+		lineageTag: 5f4cb20d-222d-5765-a669-96fb93d2e5f1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Segmento]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'SKU Numerador' = calculated
+		mode: import
+		source =
+				-- Lista de SKUs para elegir el numerador. Sin relaciones: las medidas leen la selección.
+				-- Solo SKUs con precio en alguna fuente y con KG / U en el maestro (sin KG / U no hay $/kg).
+				VAR _conPrecio = DISTINCT ( UNION ( DISTINCT ( 'Precios COPI'[EAN] ), DISTINCT ( 'Precios SNP'[EAN] ) ) )
+				RETURN
+				    SELECTCOLUMNS (
+				        FILTER ( Productos, Productos[KG_U] > 0 && Productos[EAN] IN _conPrecio ),
+				        "EAN", Productos[EAN],
+				        "SKU", Productos[SKU],
+				        "Marca", Productos[Marca],
+				        "Empresa", Productos[Empresa],
+				        "Familia", Productos[Familia],
+				        "Segmento", Productos[Segmento]
+				    )
+
+	annotation PBI_Id = d0ccaf87d24059b881b452a9c7cc7436
+

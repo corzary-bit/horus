@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "e477e42c0cf755babcb9",
+  "position": {
+    "x": 30,
+    "y": 190,
+    "z": 3000,
+    "height": 38,
+    "width": 1860,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "A · Pares definidos (PRC.platinum_pairs_copi)",
+                    "textStyle": {
+                      "fontSize": "15pt",
+                      "color": "#1f2a44",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,31 @@
+model Model
+	culture: es-AR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-AR
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["Precios COPI","Precios SNP","Productos","PDV COPI","PDV SNP","Pares COPI","Pares SNP"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'Precios COPI'
+ref table 'Precios SNP'
+ref table _Medidas
+ref table Productos
+ref table 'PDV COPI'
+ref table 'PDV SNP'
+ref table 'Semanas COPI'
+ref table 'Semanas SNP'
+ref table 'Pares COPI'
+ref table 'Pares SNP'
+ref table 'SKU Numerador'
+ref table 'SKU Denominador'
+ref table 'Tipo de precio'
+
+ref cultureInfo es-AR
+

@@ -1,0 +1,83 @@
+table 'Pares COPI'
+	lineageTag: c71e26a3-df74-5c9c-a316-b887fab6dceb
+
+	column Par
+		dataType: string
+		lineageTag: 18422efa-8965-517a-ae72-1e8e430f7dbc
+		summarizeBy: none
+		sourceColumn: Par
+
+		annotation SummarizationSetBy = Automatic
+
+	column Agrupador
+		dataType: string
+		lineageTag: be27f11c-3d3f-5eeb-8dc1-49fffe94d9a3
+		summarizeBy: none
+		sourceColumn: Agrupador
+
+		annotation SummarizationSetBy = Automatic
+
+	column Canal
+		dataType: string
+		lineageTag: 09f80c59-646b-5e80-b6b8-28c6091c91a0
+		summarizeBy: none
+		sourceColumn: Canal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Clave
+		dataType: string
+		lineageTag: 7e6b3627-ed4e-59c3-af39-ee7d6f17c2a8
+		summarizeBy: none
+		sourceColumn: Clave
+
+		annotation SummarizationSetBy = Automatic
+
+	column EAN_Numerador
+		dataType: string
+		isHidden
+		lineageTag: 45823dee-1825-5449-b85c-0cd22dd3fb51
+		summarizeBy: none
+		sourceColumn: EAN_Numerador
+
+		annotation SummarizationSetBy = Automatic
+
+	column Desc_Numerador
+		dataType: string
+		lineageTag: 80a9e344-9362-5033-8324-0c8ebcedfcb4
+		summarizeBy: none
+		sourceColumn: Desc_Numerador
+
+		annotation SummarizationSetBy = Automatic
+
+	column EAN_Denominador
+		dataType: string
+		isHidden
+		lineageTag: a74d3d77-78ea-5f83-a8c8-6d5f33176867
+		summarizeBy: none
+		sourceColumn: EAN_Denominador
+
+		annotation SummarizationSetBy = Automatic
+
+	column Desc_Denominador
+		dataType: string
+		lineageTag: b9433617-d676-5bb2-84d5-3445e1303156
+		summarizeBy: none
+		sourceColumn: Desc_Denominador
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Pares COPI' = m
+		mode: import
+		source =
+				let
+				    Origen = Sql.Database("10.1.82.27", "SANDBOX_BRONZE"),
+				    Pares = Origen{[Schema="PRC",Item="platinum_pairs_copi"]}[Data],
+				    Columnas = Table.SelectColumns(Pares, {"Clave", "Canal", "Agrupador", "EAN_Numerador", "Desc_Numerador", "EAN_Denominador", "Desc_Denominador"}),
+				    Valores = Table.TransformColumns(Columnas, {{"Clave", each if _ = null then null else Text.Trim(Text.From(_)), type nullable text}, {"Canal", each if _ = null then null else Text.Trim(Text.From(_)), type nullable text}, {"Agrupador", each if _ = null then null else Text.Trim(Text.From(_)), type nullable text}, {"EAN_Numerador", each if _ = null then null else Text.Trim(Text.From(_)), type nullable text}, {"Desc_Numerador", each if _ = null then null else Text.Trim(Text.From(_)), type nullable text}, {"EAN_Denominador", each if _ = null then null else Text.Trim(Text.From(_)), type nullable text}, {"Desc_Denominador", each if _ = null then null else Text.Trim(Text.From(_)), type nullable text}}),
+				    Par = Table.AddColumn(Valores, "Par", each (if [Desc_Numerador] = null then [EAN_Numerador] else [Desc_Numerador]) & " vs " & (if [Desc_Denominador] = null then [EAN_Denominador] else [Desc_Denominador]), type text)
+				in
+				    Par
+
+	annotation PBI_ResultType = Table
+

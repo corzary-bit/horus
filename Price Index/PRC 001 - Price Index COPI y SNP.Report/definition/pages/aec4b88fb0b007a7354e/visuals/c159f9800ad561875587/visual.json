@@ -1,0 +1,195 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "c159f9800ad561875587",
+  "position": {
+    "x": 1142,
+    "y": 230,
+    "z": 5000,
+    "height": 372,
+    "width": 748,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Pares COPI"
+                    }
+                  },
+                  "Property": "Par"
+                }
+              },
+              "queryRef": "Pares COPI.Par",
+              "nativeQueryRef": "Par",
+              "displayName": "Par"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI PI Par"
+                }
+              },
+              "queryRef": "_Medidas.COPI PI Par",
+              "nativeQueryRef": "COPI PI Par",
+              "displayName": "Price Index"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI Var Par"
+                }
+              },
+              "queryRef": "_Medidas.COPI Var Par",
+              "nativeQueryRef": "COPI Var Par",
+              "displayName": "Var. vs sem. ant."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI Precio KG Num Par"
+                }
+              },
+              "queryRef": "_Medidas.COPI Precio KG Num Par",
+              "nativeQueryRef": "COPI Precio KG Num Par",
+              "displayName": "$/kg num."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI Precio KG Den Par"
+                }
+              },
+              "queryRef": "_Medidas.COPI Precio KG Den Par",
+              "nativeQueryRef": "COPI Precio KG Den Par",
+              "displayName": "$/kg den."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "COPI PDV Par"
+                }
+              },
+              "queryRef": "_Medidas.COPI PDV Par",
+              "nativeQueryRef": "COPI PDV Par",
+              "displayName": "PDV con cruce"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Pares COPI"
+                  }
+                },
+                "Property": "Par"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'growToFit'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Center'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'BoldHeader'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Detalle por par (toda la selección de los segmentadores)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

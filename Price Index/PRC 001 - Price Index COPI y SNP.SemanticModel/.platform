@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "PRC 001 - Price Index COPI y SNP"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "5da7de5f-c524-5554-ac33-05794112216e"
+  }
+}

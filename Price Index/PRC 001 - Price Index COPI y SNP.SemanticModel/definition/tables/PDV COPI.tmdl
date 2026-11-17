@@ -1,0 +1,74 @@
+table 'PDV COPI'
+	lineageTag: 2bea4e06-d3e8-51c9-94e0-a3cd5c1491cc
+
+	column Codigo_PDV
+		dataType: string
+		isHidden
+		lineageTag: 543d2639-cb77-5a8a-8dff-8aa1d6b37bf0
+		summarizeBy: none
+		sourceColumn: Codigo_PDV
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre PDV'
+		dataType: string
+		lineageTag: a5c7e0e3-097e-58a6-863e-69846cbc8fcd
+		summarizeBy: none
+		sourceColumn: Nombre PDV
+
+		annotation SummarizationSetBy = Automatic
+
+	column Región
+		dataType: string
+		lineageTag: d7bfe737-7a16-514f-a86a-bab18eed3eae
+		summarizeBy: none
+		sourceColumn: Región
+
+		annotation SummarizationSetBy = Automatic
+
+	column Provincia
+		dataType: string
+		lineageTag: 17bb4784-ef42-53fc-8380-f1d6480c074a
+		summarizeBy: none
+		sourceColumn: Provincia
+
+		annotation SummarizationSetBy = Automatic
+
+	column Localidad
+		dataType: string
+		lineageTag: c6e943bd-f876-5f4f-87c5-dbbb4f317ebf
+		summarizeBy: none
+		sourceColumn: Localidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcanal
+		dataType: string
+		lineageTag: 2a3d432a-eb9b-5ec0-a9cd-55d3bbf81ec0
+		summarizeBy: none
+		sourceColumn: Subcanal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Clúster
+		dataType: string
+		lineageTag: d279b008-ec3e-5769-974f-ad16646484e5
+		summarizeBy: none
+		sourceColumn: Clúster
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'PDV COPI' = m
+		mode: import
+		source =
+				let
+				    Origen = Sql.Database("10.1.82.27", "SANDBOX_BRONZE"),
+				    Gold = Origen{[Schema="PRC",Item="Gold_Comparativo"]}[Data],
+				    Filas = Table.SelectRows(Gold, each [Fuente] = "COPI" and [Codigo_PDV] <> null),
+				    PDV = Table.Group(Filas, {"Codigo_PDV"}, {{"Nombre PDV", each List.Max([Nombre_PDV]), type nullable text}, {"Región", each List.Max([Region]), type nullable text}, {"Provincia", each List.Max([Provincia]), type nullable text}, {"Localidad", each List.Max([Localidad]), type nullable text}, {"Subcanal", each List.Max([Subcanal]), type nullable text}, {"Clúster", each List.Max([Cluster_Para]), type nullable text}}),
+				    Tipos = Table.TransformColumnTypes(PDV, {{"Codigo_PDV", type text}})
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,66 @@
+table 'PDV SNP'
+	lineageTag: 7ec93c7e-86d9-5802-9278-695ce2401d93
+
+	column Codigo_PDV
+		dataType: string
+		isHidden
+		lineageTag: 6df54c46-da5e-54e7-95d9-c98e3f7729b7
+		summarizeBy: none
+		sourceColumn: Codigo_PDV
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre PDV'
+		dataType: string
+		lineageTag: 26d4988f-dfe4-53a5-9ca5-364805ca5a1d
+		summarizeBy: none
+		sourceColumn: Nombre PDV
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cadena
+		dataType: string
+		lineageTag: d26c25e0-90d9-581e-bb80-d8265ad94919
+		summarizeBy: none
+		sourceColumn: Cadena
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcanal
+		dataType: string
+		lineageTag: 2c316429-e9cc-59f6-805b-5f6acae9d09f
+		summarizeBy: none
+		sourceColumn: Subcanal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Provincia
+		dataType: string
+		lineageTag: 185a860a-babf-50ed-a2ec-aee48f75eff2
+		summarizeBy: none
+		sourceColumn: Provincia
+
+		annotation SummarizationSetBy = Automatic
+
+	column Región
+		dataType: string
+		lineageTag: 47230b87-1d1a-5682-8f78-5f07d4044180
+		summarizeBy: none
+		sourceColumn: Región
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'PDV SNP' = m
+		mode: import
+		source =
+				let
+				    Origen = Sql.Database("10.1.82.27", "SANDBOX_BRONZE"),
+				    Gold = Origen{[Schema="PRC",Item="Gold_Comparativo"]}[Data],
+				    Filas = Table.SelectRows(Gold, each [Fuente] = "SNP" and [Codigo_PDV] <> null),
+				    PDV = Table.Group(Filas, {"Codigo_PDV"}, {{"Nombre PDV", each List.Max([Nombre_PDV]), type nullable text}, {"Cadena", each List.Max([Descripcion_Cliente]), type nullable text}, {"Subcanal", each List.Max([Subcanal]), type nullable text}, {"Provincia", each List.Max([Provincia]), type nullable text}, {"Región", each List.Max([Region]), type nullable text}}),
+				    Tipos = Table.TransformColumnTypes(PDV, {{"Codigo_PDV", type text}})
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table
+

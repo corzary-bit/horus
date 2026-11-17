@@ -1,0 +1,101 @@
+table Productos
+	lineageTag: 17a4f7ec-c0bc-502f-bdf8-490b65bbb347
+
+	column EAN
+		dataType: string
+		lineageTag: 745cbd66-37ef-5f94-b46c-5fee455c17c1
+		summarizeBy: none
+		sourceColumn: EAN
+
+		annotation SummarizationSetBy = Automatic
+
+	column SKU
+		dataType: string
+		lineageTag: c286475b-36d4-53a1-bf13-9a401f857f42
+		summarizeBy: none
+		sourceColumn: SKU
+
+		annotation SummarizationSetBy = Automatic
+
+	column Descripcion_SKU
+		dataType: string
+		lineageTag: 785bbdcd-aa4e-5073-89e6-a3829aefad84
+		summarizeBy: none
+		sourceColumn: Descripcion_SKU
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cod_SKU
+		dataType: string
+		lineageTag: 75aabc68-f860-502c-8d07-71e060e83c3b
+		summarizeBy: none
+		sourceColumn: Cod_SKU
+
+		annotation SummarizationSetBy = Automatic
+
+	column Marca
+		dataType: string
+		lineageTag: d0b5c557-09ac-5b0f-b6a2-b8ccab708211
+		summarizeBy: none
+		sourceColumn: Marca
+
+		annotation SummarizationSetBy = Automatic
+
+	column Empresa
+		dataType: string
+		lineageTag: f7aac6b5-7a96-5f4d-8d00-c71aa5a68984
+		summarizeBy: none
+		sourceColumn: Empresa
+
+		annotation SummarizationSetBy = Automatic
+
+	column Familia
+		dataType: string
+		lineageTag: ae616a7e-e6d8-59d2-89c3-a76c69aa12e7
+		summarizeBy: none
+		sourceColumn: Familia
+
+		annotation SummarizationSetBy = Automatic
+
+	column Segmento
+		dataType: string
+		lineageTag: 062e8c9f-057d-588a-b5ab-5f80537fc710
+		summarizeBy: none
+		sourceColumn: Segmento
+
+		annotation SummarizationSetBy = Automatic
+
+	column Marca_Propia
+		dataType: string
+		lineageTag: 7c0de2ac-0325-5a77-942e-831663c8b98d
+		summarizeBy: none
+		sourceColumn: Marca_Propia
+
+		annotation SummarizationSetBy = Automatic
+
+	column KG_U
+		dataType: double
+		formatString: 0.000
+		lineageTag: d2dbff78-854a-5763-a4c5-fba1a338e9b4
+		summarizeBy: none
+		sourceColumn: KG_U
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Productos = m
+		mode: import
+		source =
+				let
+				    Origen = Sql.Database("10.1.82.27\mfgbi", "MDS_PRODU"),
+				    Maestro = Origen{[Schema="mdm",Item="ICO_EANs_mercado"]}[Data],
+				    Columnas = Table.SelectColumns(Maestro, {"EAN", "KG / U", "Familia", "Empresa", "Marca", "Segmento", "Cód SKU Marfrig", "Descripción SKU Nuevo", "Marca Propia_Name"}),
+				    Nombres = Table.RenameColumns(Columnas, {{"KG / U", "KG_U"}, {"Cód SKU Marfrig", "Cod_SKU"}, {"Descripción SKU Nuevo", "Descripcion_SKU"}, {"Marca Propia_Name", "Marca_Propia"}}),
+				    Valores = Table.TransformColumns(Nombres, {{"EAN", each Text.Trim(Text.From(_)), type nullable text}, {"KG_U", each try Number.From(_, "en-US") otherwise null, type nullable number}, {"Cod_SKU", each Text.From(_), type nullable text}, {"Descripcion_SKU", each Text.From(_), type nullable text}, {"Marca", each Text.From(_), type nullable text}, {"Empresa", each Text.From(_), type nullable text}, {"Familia", each Text.From(_), type nullable text}, {"Segmento", each Text.From(_), type nullable text}, {"Marca_Propia", each Text.From(_), type nullable text}}),
+				    ConEAN = Table.SelectRows(Valores, each [EAN] <> null and [EAN] <> ""),
+				    Unicos = Table.Distinct(ConEAN, {"EAN"}),
+				    SKU = Table.AddColumn(Unicos, "SKU", each (if [Descripcion_SKU] = null then "Sin descripción" else [Descripcion_SKU]) & " (" & [EAN] & ")", type text)
+				in
+				    SKU
+
+	annotation PBI_ResultType = Table
+

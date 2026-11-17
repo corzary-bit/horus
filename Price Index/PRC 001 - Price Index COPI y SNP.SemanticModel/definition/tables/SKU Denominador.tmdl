@@ -1,0 +1,77 @@
+table 'SKU Denominador'
+	lineageTag: 342947e0-7d41-57e4-8e2c-3a874a80f9c1
+
+	column EAN
+		dataType: string
+		isHidden
+		lineageTag: 6bedcfc0-138f-5d9b-9f26-7f2b183833a2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [EAN]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SKU
+		dataType: string
+		lineageTag: efc62e57-7e05-5093-9a60-6df2d0fb064f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [SKU]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Marca
+		dataType: string
+		lineageTag: 60aa30be-32f4-55f8-b924-afaf753dad0d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Marca]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Empresa
+		dataType: string
+		lineageTag: 83b61eeb-32f2-58f3-84e6-6faa8addd796
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Empresa]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Familia
+		dataType: string
+		lineageTag: 17cbe85b-3590-5391-93e4-253cd0b21f02
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Familia]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Segmento
+		dataType: string
+		lineageTag: ec49ccb0-59ce-5e52-a556-7cb3b2433cfd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Segmento]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'SKU Denominador' = calculated
+		mode: import
+		source =
+				-- Lista de SKUs para elegir el denominador. Sin relaciones: las medidas leen la selección.
+				-- Solo SKUs con precio en alguna fuente y con KG / U en el maestro (sin KG / U no hay $/kg).
+				VAR _conPrecio = DISTINCT ( UNION ( DISTINCT ( 'Precios COPI'[EAN] ), DISTINCT ( 'Precios SNP'[EAN] ) ) )
+				RETURN
+				    SELECTCOLUMNS (
+				        FILTER ( Productos, Productos[KG_U] > 0 && Productos[EAN] IN _conPrecio ),
+				        "EAN", Productos[EAN],
+				        "SKU", Productos[SKU],
+				        "Marca", Productos[Marca],
+				        "Empresa", Productos[Empresa],
+				        "Familia", Productos[Familia],
+				        "Segmento", Productos[Segmento]
+				    )
+
+	annotation PBI_Id = d32a2627dccb5ff1932532a745c5f705
+
